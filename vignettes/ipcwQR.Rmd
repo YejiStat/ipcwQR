@@ -46,12 +46,11 @@ i.e., $T$ is left-censored if $L=0$ and right-censored if $R=\infty$.
 ## Usages
 
 Installation of ipcwQR package can be done by
-
-
 ```{r results='hide', message=FALSE, warning=FALSE}
 devtools::install_github(repo="YejiStat/ipcwQR")
 ```
 
+or
 ```{r results='hide', message=FALSE, warning=FALSE}
 base::require("ipcwQR")
 ```
@@ -67,7 +66,7 @@ drq() function has the following arguments:
 dcrq(L=L,R=R,T=T,delta=delta,x=x,tau=tau)
 ```
 
-see the detailed description from help(picrq()) and help(dcrq()).
+See the detailed description from help(picrq()) and help(dcrq()).
 
 We first simulate univariate partly interval-censored data with normal random error, which is similar to PIC data simulation setting of Kim et al. (2022+).
 
@@ -89,7 +88,6 @@ ipcwQR::picrq(L=V,R=U,delta=delta,x=x,tau=tau)
 ipcwQR::picrq(L=V,R=U,delta=delta,x=x,tau=tau,estimation = "dr")
 ```
 
-
 We posit two estimating methods, ipcw estimating method and doubly robust ipcw estimating method, which can be conducted by specifying estimation = NULL and estimation = "dr", respectively.
 
 Next, we simulate univariate doubly-censored data with normal random error, which is one of DC data simulation setting of Kim et al. (2022+).
@@ -110,9 +108,10 @@ ipcwQR::dcrq(L,R,T,delta,x,tau,estimation = "dr")
 ipcwQR::dcrq(L,R,T,delta,x,tau,wttype = "nonparam", hlimit = 0.9)
 ```
 
+We can choose one of two weighting types, the parametric KM estimating method and Beran's nonparametric KM estimating method, which can be accessible by using wttype="param" and wttype="nonparam", respectively.
 
 
-Finally, we simulate multivariate doubly-censored data with normal random error, which is one of MVDC data simulation setting of Kim et al. (2022+).
+Finally, we cover multivariate doubly-censored data with normal random error, which is one of MVDC data simulation setting of Kim et al. (2022+).
 
 ```{r message=FALSE, warning=FALSE}
 cluster=60
@@ -138,7 +137,7 @@ dcrq(L,R,T,delta,x,tau,id=id)
 
 
 
-Next, we apply our proposed method to the multivariate clustered data using a phase 3 metastatic colorectal cancer clinical trial. This dataset is accessible for data(mCRC) in the PICBayes R package (Pan, 2021).
+In real data analysis, we apply our proposed method to the multivariate clustered data using a phase 3 metastatic colorectal cancer clinical trial. This dataset is accessible for data(mCRC) in the PICBayes R package (Pan, 2021).
 
 ```{r message=FALSE, warning=FALSE}
 library(PICBayes)
@@ -166,7 +165,7 @@ x = cbind(d$x1,d$x2); id=d$id;  tau=0.1;
 ipcwQR::picrq(L,R,delta,x=x,tau=tau)
 ipcwQR::picrq(L,R,delta,x=x,tau=tau, estimation = "dr")
 ipcwQR::picrq(L,R,delta,x=x,tau=tau,id=id,hlimit=0.9,k=2)
-ipcwQR::picrq(L,R,delta,x=x,tau=tau,id=NULL,hlimit=0.9)
+ipcwQR::picrq(L,R,delta,x=x,tau=tau,id=NULL,wttype = "nonparam",hlimit=0.9)
 ```
 
 

@@ -367,12 +367,13 @@ also be viewed as a special case of partly interval-censoring, i.e.,
 <h2>Usages</h2>
 <p>Installation of ipcwQR package can be done by</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="at">repo=</span><span class="st">&quot;YejiStat/ipcwQR&quot;</span>)</span></code></pre></div>
+<p>or</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>base<span class="sc">::</span><span class="fu">require</span>(<span class="st">&quot;ipcwQR&quot;</span>)</span></code></pre></div>
 <p>picrq() function has the following arguments:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">picrq</span>(<span class="at">L=</span>L,<span class="at">R=</span>R,<span class="at">delta=</span>delta,<span class="at">x=</span>x,<span class="at">tau=</span>tau)</span></code></pre></div>
 <p>drq() function has the following arguments:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dcrq</span>(<span class="at">L=</span>L,<span class="at">R=</span>R,<span class="at">T=</span>T,<span class="at">delta=</span>delta,<span class="at">x=</span>x,<span class="at">tau=</span>tau)</span></code></pre></div>
-<p>see the detailed description from help(picrq()) and help(dcrq()).</p>
+<p>See the detailed description from help(picrq()) and help(dcrq()).</p>
 <p>We first simulate univariate partly interval-censored data with
 normal random error, which is similar to PIC data simulation setting of
 Kim et al. (2022+).</p>
@@ -430,7 +431,11 @@ al. (2022+).</p>
 <span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Intercept 0.3     1.249361 0.202966  0e+00 0.851547 1.647175</span></span>
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; x1        0.3     0.985280 0.127423  0e+00 0.735530 1.235029</span></span>
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; x2        0.3     0.954131 0.245331  5e-05 0.473282 1.434979</span></span></code></pre></div>
-<p>Finally, we simulate multivariate doubly-censored data with normal
+<p>We can choose one of two weighting types, the parametric KM
+estimating method and Beran’s nonparametric KM estimating method, which
+can be accessible by using wttype=“param” and wttype=“nonparam”,
+respectively.</p>
+<p>Finally, we cover multivariate doubly-censored data with normal
 random error, which is one of MVDC data simulation setting of Kim et
 al. (2022+).</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cluster<span class="ot">=</span><span class="dv">60</span></span>
@@ -460,10 +465,10 @@ al. (2022+).</p>
 <span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Intercept 0.3     1.864716 0.328470 0.000000 1.220915 2.508518</span></span>
 <span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; x1        0.3     1.246591 0.314810 0.000038 0.629563 1.863618</span></span>
 <span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; x2        0.3     0.996547 0.426036 0.009665 0.161517 1.831578</span></span></code></pre></div>
-<p>Next, we apply our proposed method to the multivariate clustered data
-using a phase 3 metastatic colorectal cancer clinical trial. This
-dataset is accessible for data(mCRC) in the PICBayes R package (Pan,
-2021).</p>
+<p>In real data analysis, we apply our proposed method to the
+multivariate clustered data using a phase 3 metastatic colorectal cancer
+clinical trial. This dataset is accessible for data(mCRC) in the
+PICBayes R package (Pan, 2021).</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(PICBayes)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;mCRC&quot;</span>)</span>
@@ -501,11 +506,11 @@ dataset is accessible for data(mCRC) in the PICBayes R package (Pan,
 <span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Intercept 0.1     3.178608 0.399206 0.000000  2.396164 3.961051</span></span>
 <span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         0.1     0.592240 0.422500 0.080495 -0.235860 1.420339</span></span>
 <span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         0.1     0.333733 0.405830 0.205440 -0.461694 1.129159</span></span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>ipcwQR<span class="sc">::</span><span class="fu">picrq</span>(L,R,delta,<span class="at">x=</span>x,<span class="at">tau=</span>tau,<span class="at">id=</span><span class="cn">NULL</span>,<span class="at">hlimit=</span><span class="fl">0.9</span>)</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>ipcwQR<span class="sc">::</span><span class="fu">picrq</span>(L,R,delta,<span class="at">x=</span>x,<span class="at">tau=</span>tau,<span class="at">id=</span><span class="cn">NULL</span>,<span class="at">wttype =</span> <span class="st">&quot;nonparam&quot;</span>,<span class="at">hlimit=</span><span class="fl">0.9</span>)</span>
 <span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           tau coefficients       se   pvalue  lower bd upper bd</span></span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Intercept 0.1     3.137374 0.553130 0.000000  2.053240 4.221509</span></span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         0.1     0.208467 0.595452 0.363132 -0.958619 1.375554</span></span>
-<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         0.1     0.360004 0.594215 0.272308 -0.804657 1.524665</span></span></code></pre></div>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Intercept 0.1     3.127748 0.556743 0.000000  2.036532 4.218964</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         0.1     0.204678 0.599191 0.366330 -0.969736 1.379091</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         0.1     0.366245 0.597364 0.269905 -0.804589 1.537079</span></span></code></pre></div>
 </div>
 <div id="references" class="section level2">
 <h2>References</h2>
