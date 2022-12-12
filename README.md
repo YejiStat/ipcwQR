@@ -1,4 +1,4 @@
-# Introduction to `ipcwQR` R package
+# Introduction to `ipcwqrPIC` R package
 
 
 ## Introduction
