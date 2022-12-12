@@ -13,7 +13,7 @@ NULL
 #' @param wttype weight estimating method, default is "param" and Beran's nonparametric KM estimating method as "nonparam".
 #' @param hlimit bandwidth value, default is 0.5.
 #' @param id cluster id. If the data does not have clustered structure, set \code{id=NULL}.
-#' @param k index of cluster weight.
+#' @param index index of cluster weight.
 #' @param maxit maximum number of iteration for the log-rank estimator, default is 100.
 #' @param tol tolerance of iteration for the log-rank estimator, default is 1e-3.
 #'
@@ -82,17 +82,14 @@ NULL
 #'picrq(L,R,delta,x=x,tau=tau,hlimit=0.9)
 #'picrq(L,R,delta,x=x,tau=tau,estimation = "dr")
 #'picrq(L,R,delta,x=x,tau=tau,id=id)
+#'picrq(L,R,delta,x=x,tau=tau,id=id,index = 2)
 #' }
 #' @export
 #'
 #'
-#'
 
 
-# library(tidyverse)
-
-
-picrq=function(L,R,delta,x,tau,estimation=NULL,wttype="param",hlimit=0.5,id=NULL,k=1,maxit=100,tol=1e-3){
+picrq=function(L,R,delta,x,tau,estimation=NULL,wttype="param",hlimit=0.5,id=NULL,index=1,maxit=100,tol=1e-3){
   
   
   library(survival)
@@ -180,14 +177,14 @@ picrq=function(L,R,delta,x,tau,estimation=NULL,wttype="param",hlimit=0.5,id=NULL
   }
   
   # eta=1
-  PICrq=function(L,R,delta,x,ww){
+  PICrq=function(L,R,delta,x,ww,eta){
     
     Y=pmax(ifelse(delta==0,R,L),1e-8); n=length(Y)
     quantreg::rq((Y)~x, weights = eta*ww, tau = tau)$coef #intc, beta1, beta2
   }
   
   # beta=c(1,1,1); Sigma=diag(3)
-  Efunc=function(L,R,delta,x,Sigma,beta,tau,ww){
+  Efunc=function(L,R,delta,x,Sigma,beta,tau,ww,eta){
     Y=pmax(ifelse(delta==0,R,L),1e-8); n=length(Y)
     xx = as.matrix(cbind(1,x)); p = ncol(xx)
     ss = sqrt( pmax(1e-3, diag(xx%*%Sigma%*%t(xx))) ) 
@@ -199,7 +196,7 @@ picrq=function(L,R,delta,x,tau,estimation=NULL,wttype="param",hlimit=0.5,id=NULL
   }
   
   # wr=Rwtfunc(L,R,delta);wl=Lwtfunc(L,R,delta);
-  DREfunc=function(L,R,delta,x,Sigma,beta,tau,ww,wl,wr){
+  DREfunc=function(L,R,delta,x,Sigma,beta,tau,ww,wl,wr,eta){
     Y=pmax(ifelse(delta==0,R,L),1e-8); n=length(Y)
     n=length(Y); 
     ndelta2=sum(ifelse(delta==1,1,0))
@@ -229,7 +226,7 @@ picrq=function(L,R,delta,x,tau,estimation=NULL,wttype="param",hlimit=0.5,id=NULL
   }
   
   
-  Afunc=function(L,R,delta,x,Sigma,beta,ww){
+  Afunc=function(L,R,delta,x,Sigma,beta,ww,eta){
     Y=pmax(ifelse(delta==0,R,L),1e-8); n=length(Y)
     xx = as.matrix(cbind(1,x)); p = ncol(xx)
     ss = sqrt( pmax(1e-3, diag(xx%*%Sigma%*%t(xx))) ) 
@@ -239,7 +236,7 @@ picrq=function(L,R,delta,x,tau,estimation=NULL,wttype="param",hlimit=0.5,id=NULL
     A/n
   }
   
-  Gfunc=function(L,R,delta,x,Sigma,beta,tau,ww){
+  Gfunc=function(L,R,delta,x,Sigma,beta,tau,ww,eta){
     
     Y=pmax(ifelse(delta==0,R,L),1e-8); n=length(Y)
     xx = as.matrix(cbind(1,x)); p = ncol(xx)
@@ -288,7 +285,7 @@ picrq=function(L,R,delta,x,tau,estimation=NULL,wttype="param",hlimit=0.5,id=NULL
   
   Y=pmax(ifelse(delta==0,R,L),1e-8); n=length(Y)
   if(is.null(id)){eta=1}
-  else{ci=rep(c(table(id)),c(table(id))); wi=(1/ci); eta=(wi^k)}
+  else{ci=rep(c(table(id)),c(table(id))); wi=(1/ci); eta=(wi^(index))}
   
   if(wttype=="param"){ww=wtfunc2(L,R,delta);}
   if(wttype=="nonparam" && is.null(hlimit)){print("hlimit should be entered.")}
@@ -296,19 +293,19 @@ picrq=function(L,R,delta,x,tau,estimation=NULL,wttype="param",hlimit=0.5,id=NULL
   xx = as.matrix(cbind(1,x)); p = ncol(xx)
   # wttype="param"; eta=1; maxit=100; tol=10; estimation=NULL
   # wttype="nonparam"; eta=1; maxit=100; tol=10; estimation="dr"
-  old_beta = init = beta = PICrq(L,R,delta,x,ww=ww)
+  old_beta = init = beta = PICrq(L,R,delta,x,ww=ww,eta=eta)
   old_Sigma = Sigma = diag(p)/n
   
   
   i=0; eps=1; max.iter=100; tol = 1e-3; 
   while (i<max.iter & eps >= tol ) {
-    Amat = Afunc(L,R,delta,x,beta=c(old_beta),ww=ww,Sigma = old_Sigma)
+    Amat = Afunc(L,R,delta,x,beta=c(old_beta),ww=ww,Sigma = old_Sigma,eta=eta)
     if(is.null(estimation)){
-      new_beta = c(old_beta) - solve(Amat)%*%Efunc(L,R,delta,x,ww=ww,beta=c(old_beta),Sigma = old_Sigma,tau)/n}
+      new_beta = c(old_beta) - solve(Amat)%*%Efunc(L,R,delta,x,ww=ww,beta=c(old_beta),Sigma = old_Sigma,tau,eta=eta)/(n^(3/2))}
     else if(estimation=="dr"){wr=Rwtfunc(L,R,delta);wl=Lwtfunc(L,R,delta);
-    new_beta = c(old_beta) - solve(Amat)%*%DREfunc(L,R,delta,x,ww=ww,wl=wl,wr=wr,beta=c(old_beta),Sigma = old_Sigma,tau)/n}
+    new_beta = c(old_beta) - solve(Amat)%*%DREfunc(L,R,delta,x,ww=ww,wl=wl,wr=wr,beta=c(old_beta),Sigma = old_Sigma,tau,eta=eta)/(n^(3/2))}
     # new_beta = BB::dfsane(par=old_beta,fn=U_n,Y=Y,x=x,ww=ww,Sigma=old_Sigma,tau=tau,control=list(trace=FALSE))$par
-    Gamma = Gfunc(L,R,delta,x,beta=c(old_beta),Sigma = old_Sigma,ww=ww, tau=tau)
+    Gamma = Gfunc(L,R,delta,x,beta=c(old_beta),Sigma = old_Sigma,ww=ww, tau=tau,eta=eta)
     new_Sigma = up_Sigma(Y,Amat,Gamma)
     
     if (det(new_Sigma) <= 0) {
@@ -330,4 +327,3 @@ picrq=function(L,R,delta,x,tau,estimation=NULL,wttype="param",hlimit=0.5,id=NULL
   rownames(res)[1]="Intercept"
   round((res), 6)
 }
-
