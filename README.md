@@ -2,7 +2,7 @@
 
 
 ## Introduction
-`ipcwQR` is the R package to fit a new inverse-probability censoring weighted (IPCW) estimating procedure for censored quantile regression when the data are partially interval-censored that include doubly-censored (DC) data and partly interval-censored (PIC) and possibly correlated within same cluster.
+`ipcwqrPIC` is the R package to fit a new inverse-probability censoring weighted (IPCW) estimating procedure for censored quantile regression when the data are partially interval-censored that include doubly-censored (DC) data and partly interval-censored (PIC) and possibly correlated within same cluster.
 Let $T$ and $X$ be the event time of interest and its related $p$-vector of covariates, respectively.
 Our main objective is to estimate 
 the $p$-dimensional quantile coefficient vector ${\boldsymbol{\beta}}_0(\tau)$
@@ -51,11 +51,11 @@ L=(log(d$U));R=log(d$V); delta=d$delta
 x = cbind(d$x1,d$x2); id=d$id;  tau=0.3;
 
 # Cluster (unadjusted)
-ipcwQR::picrq(L,R,delta,x=x,tau=tau)
-ipcwQR::picrq(L,R,delta,x=x,tau=tau, estimation = "dr")
+ipcwqrPIC::picrq(L,R,delta,x=x,tau=tau)
+ipcwqrPIC::picrq(L,R,delta,x=x,tau=tau, estimation = "dr")
 # Cluster (adjusted)
-ipcwQR::picrq(L,R,delta,x=x,tau=tau,id=id,hlimit=0.9,k=2)
-ipcwQR::picrq(L,R,delta,x=x,tau=tau,id=id,hlimit=0.9)
+ipcwqrPIC::picrq(L,R,delta,x=x,tau=tau,id=id,hlimit=0.9,k=2)
+ipcwqrPIC::picrq(L,R,delta,x=x,tau=tau,id=id,hlimit=0.9)
 ```
 
 
